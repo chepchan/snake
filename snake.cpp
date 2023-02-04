@@ -29,7 +29,6 @@ class Worm {
     float speed = 1;
     int xDir = 1;
     int yDir = 0;
-    float deltaTime;
     int total = 0; //making the snake longer
     Pointf* tail = new Pointf[100]; 
     void update(Rect screen, int scale)
@@ -44,7 +43,7 @@ class Worm {
         y += speed * yDir; //*scale but it makes it way too fast
         wrapAroundEdges(screen, scale);
     }
-    void directionOfMovement(int x, int y)
+    void setDir(int x, int y)
     {
         xDir = x;
         yDir = y;
@@ -54,9 +53,9 @@ class Worm {
     void wrapAroundEdges(Rect& screen, int scale)
     {
         if (x > screen.width) { x = 0; }
-        if (x + scale < 0) { x = screen.width - scale; }
+        if (x + scale < 0) { x = screen.width - 1; }
         if (y > screen.height) { y = 0; }
-        if (y + scale < 0) { y = screen.height - scale; }
+        if (y + scale < 0) { y = screen.height - 1; }
     }
 };
 
@@ -76,17 +75,17 @@ public:
 
     void keyboardInputs()
     {
-        if     (GetKey(olc::Key::UP).bPressed)    { smolWorm.directionOfMovement(0, -1); }
-        else if(GetKey(olc::Key::DOWN).bPressed)  { smolWorm.directionOfMovement(0, 1); }
-        else if(GetKey(olc::Key::RIGHT).bPressed) { smolWorm.directionOfMovement(1, 0); } 
-        else if(GetKey(olc::Key::LEFT).bPressed)  { smolWorm.directionOfMovement(-1, 0); }
+        if(GetKey(olc::Key::UP).bPressed)    { smolWorm.setDir(0, -1); return; }
+        if(GetKey(olc::Key::DOWN).bPressed)  { smolWorm.setDir(0, 1);  return; }
+        if(GetKey(olc::Key::RIGHT).bPressed) { smolWorm.setDir(1, 0);  return; } 
+        if(GetKey(olc::Key::LEFT).bPressed)  { smolWorm.setDir(-1, 0); return; }
     }
 
     void showPredator()
     {
         FillRect(int(smolWorm.x)*scale, int(smolWorm.y)*scale, scale, scale, babyPink);
         for (int i = 0; i < smolWorm.total; i++)
-        {//SMOLWORM.TAIL[I].X   &   SMOLWORM.TAIL[I].Y   ???
+        {
            FillRect(int(smolWorm.tail[i].x)*scale, int(smolWorm.tail[i].y)*scale, scale, scale, babyPink);
         }
     }
@@ -102,14 +101,14 @@ public:
         FillRect(int(yum.x)*scale, int(yum.y)*scale, scale, scale, purple);
     }
 
-    int distance(int x1, int y1, int x2, int y2)
+    int distance(Pointf a, Pointf b)
     {
-        return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+        return sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
     }
 
     bool yumIsEaten()
     {
-        int dist = distance(smolWorm.x, smolWorm.y, yum.x, yum.y); //distance between sneak and food
+        int dist = distance({smolWorm.x, smolWorm.y}, {yum.x, yum.y}); //distance between sneak and food
         if (dist < 1) { 
             smolWorm.total++; 
             return true; 
@@ -141,9 +140,14 @@ public:
 
 int main()
 {
-	POOPIES demo;
-	if (demo.Construct(256, 240, 4, 4))
-		demo.Start();
+	POOPIES game;
+    const int width = 256;
+    const int height = 240;
+    const int pixelScale = 4;
 
-	return 0;
+	if (!game.Construct(width, height, pixelScale, pixelScale)) return EXIT_FAILURE;
+
+	game.Start();
+
+	return EXIT_SUCCESS;
 }
