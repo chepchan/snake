@@ -43,11 +43,11 @@ public:
     int yDir = 0;
     int total = 0; //making the snake longer
     olc::Pixel babyPink = { 255, 161, 203 };
-    Pointf* tail = new Pointf[100]; 
+    Pointf* tail = new Pointf[1000]; 
 
     void update(Rect screen, int scale)
     {
-        for (int i = 0; i < sizeof(tail) - 1; i++)
+        for (int i = 0; i < total - 1; i++)
         {
             tail[i] = tail[i + 1];
         }
