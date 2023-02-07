@@ -7,26 +7,30 @@
 #include "snk.h"
 
 using namespace std::chrono_literals;
-
 class POOPIES : public olc::PixelGameEngine
 {
     Worm smolWorm;
 	Food tasty;
-	//bool over = false;
 
-public:
-	POOPIES() { sAppName = "POOPIES"; }
+	void gameOverStolen() //only appears for 1 frame 
+    {
+        if(smolWorm.game == 2)
+        {
+            Pointf death;
 
-	bool OnUserCreate() override
+            olc::Sprite* spriteGameOver = nullptr;
+	        olc::Decal* decalGameOver = nullptr;
+
+            spriteGameOver = new olc::Sprite("gameOver.png");
+            decalGameOver = new olc::Decal(spriteGameOver);
+
+            DrawDecal({death.x, death.y}, decalGameOver, {0.2f, 0.2f});
+
+        }else return;
+    }
+
+	void gaming()
 	{
-		return true;
-	}
-
-	bool OnUserUpdate(float deltaTime) override
-	{
-        Clear(olc::Pixel(0, 0, 0));
-        std::this_thread::sleep_for(50ms); //sleep
-
 		smolWorm.update({tasty.cols, tasty.rows}, smolWorm.scale);
         smolWorm.showPredator(this); 
         smolWorm.keyboardInputs(this);
@@ -35,9 +39,36 @@ public:
         if (smolWorm.yumIsEaten(tasty)) tasty.pickLocationYum();
 
 		smolWorm.DIEDIEDIE();   
-		smolWorm.gameOverStolen(this);   // game pover only appears for 1 frame at a time
-		//if (smolWorm.DIEDIEDIE()) { smolWorm.gameOverStolen(this); }
- 
+	}
+
+	void gameOver()
+	{
+		smolWorm.DIEDIEDIE();   
+		gameOverStolen();   // game over only appears for 1 frame at a time
+	}
+
+public:
+	POOPIES() { 
+        sAppName = "POOPIES"; 
+        tasty = Food(this);
+    }
+
+	bool OnUserCreate() override
+	{
+		return true;
+	}
+
+	bool OnUserUpdate(float deltaTime) override
+	{
+        Clear(olc::Pixel(84, 65, 105));
+        std::this_thread::sleep_for(50ms); //sleep
+
+		switch(smolWorm.game)
+		{
+			case 1: gaming(); break;
+			case 2: gameOver(); break;
+		}
+
 		return true;
 	}
 };

@@ -16,11 +16,24 @@ struct Rect {
 };
 
 class Food {
-public:
+public: 
+    // This has to come from somewhere it's currently undefined
+    olc::PixelGameEngine* pge;
+    // This is the default constructor
+    Food() = default;
+    // It has to be passed on from poopies in order to have
+    // otherwise the pointer is unasigned
+    // This is a constructor
+    Food(olc::PixelGameEngine* pge) {
+        this->pge = pge;
+        cols = pge->ScreenWidth() / scale;
+        rows = pge->ScreenHeight() / scale;
+    }
     int scale = 5;
     Point yum;
-    int cols = 256 / scale; //ScreenWidth() ????
-    int rows = 240 / scale; //ScreenHeight() ????
+    // These are defined before the constructor is called
+    int cols; // pge->ScreenWidth() can't have something like this because pge is undefined
+    int rows;
     olc::Pixel purple = { 194, 115, 255 };
 
     void pickLocationYum()
@@ -33,8 +46,10 @@ public:
         pge->FillRect((int)(yum.x)*scale, (int)(yum.y)*scale, scale, scale, purple);
     }
 };
+
 class Worm {
 public:
+    int game = 1;
     float x = 0;
     float y = 0;
     float speed = 1;
@@ -53,8 +68,8 @@ public:
         }
         tail[total - 1] = (Pointf){ x , y  };
 
-        x += speed * xDir; //*scale
-        y += speed * yDir; //*scale but it makes it way too fast
+        x += speed * xDir; 
+        y += speed * yDir;
         wrapAroundEdges(screen, scale);
     }
     void setDir(int x, int y)
@@ -98,40 +113,19 @@ public:
 
     bool DIEDIEDIE()
 	{
-		for (int i = 0; i < sizeof(tail); i++)
+		for (int i = 0; i < total - 1; i++)
 		{
 			Pointf position = tail[i];
 			int d = distance({x, y}, {tail[i].x, tail[i].y});
             if (d < 1)
             {
-                return true;
                 total = 0;
+                game = 2;
+                return true;
             }
 		}
         return false;
 	}
-
-    void gameOverStolen(olc::PixelGameEngine* pge) //only appears for 1 frame 
-    {
-        if(DIEDIEDIE())
-        {
-            Pointf death;
-            olc::Sprite* spriteGameOver = nullptr;
-	        olc::Decal* decalGameOver = nullptr;
-            spriteGameOver = new olc::Sprite("gameOver.png");
-            decalGameOver = new olc::Decal(spriteGameOver);
-            pge->DrawDecal({death.x, death.y}, decalGameOver, {0.2f, 0.2f});
-        }else return;
-    }
-        
-    // void gameOver(olc::PixelGameEngine* pge, bool over)
-    // {
-    //     if (over)
-    //     {
-    //         pge->DrawStringDecal(&Pointf, );
-    //     }
-    // }
-    
 
 private:
     void wrapAroundEdges(Rect& screen, int scale)
