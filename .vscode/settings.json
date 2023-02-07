@@ -1,4 +1,5 @@
 {
+    "code-runner.ignoreSelection": true,
     "code-runner.executorMap": {
 
         "javascript": "node",
