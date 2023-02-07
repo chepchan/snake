@@ -17,11 +17,23 @@ struct Rect {
 
 class Food {
 public: 
+    // This has to come from somewhere it's currently undefined
     olc::PixelGameEngine* pge;
+    // This is the default constructor
+    Food() = default;
+    // It has to be passed on from poopies in order to have
+    // otherwise the pointer is unasigned
+    // This is a constructor
+    Food(olc::PixelGameEngine* pge) {
+        this->pge = pge;
+        cols = pge->ScreenWidth();
+        rows = pge->ScreenHeight();
+    }
     int scale = 5;
     Point yum;
-    int cols = pge->ScreenWidth();//256 / scale; //ScreenWidth() ????
-    int rows = pge->ScreenHeight(); //240 / scale; //ScreenHeight() ????
+    // These are defined before the constructor is called
+    int cols; // pge->ScreenWidth() can't have something like this because pge is undefined
+    int rows;
     olc::Pixel purple = { 194, 115, 255 };
 
     void pickLocationYum()

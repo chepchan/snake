@@ -32,7 +32,10 @@ class POOPIES : public olc::PixelGameEngine
 	}
 
 public:
-	POOPIES() { sAppName = "POOPIES"; }
+	POOPIES() { 
+        sAppName = "POOPIES"; 
+        tasty = Food(this);
+    }
 
 	bool OnUserCreate() override
 	{
