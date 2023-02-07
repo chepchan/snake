@@ -12,6 +12,7 @@ class POOPIES : public olc::PixelGameEngine
 {
     Worm smolWorm;
 	Food tasty;
+	//bool over = false;
 
 public:
 	POOPIES() { sAppName = "POOPIES"; }
@@ -25,8 +26,7 @@ public:
 	{
         Clear(olc::Pixel(0, 0, 0));
         std::this_thread::sleep_for(50ms); //sleep
-	
-		//smolWorm.DIEDIEDIE();
+
 		smolWorm.update({tasty.cols, tasty.rows}, smolWorm.scale);
         smolWorm.showPredator(this); 
         smolWorm.keyboardInputs(this);
@@ -34,6 +34,10 @@ public:
         tasty.showYum(this);
         if (smolWorm.yumIsEaten(tasty)) tasty.pickLocationYum();
 
+		smolWorm.DIEDIEDIE();   
+		smolWorm.gameOverStolen(this);   // game pover only appears for 1 frame at a time
+		//if (smolWorm.DIEDIEDIE()) { smolWorm.gameOverStolen(this); }
+ 
 		return true;
 	}
 };

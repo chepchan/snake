@@ -95,18 +95,43 @@ public:
             return false; 
         }
     }
-	// void DIEDIEDIE()
-	// {
-	// 	for (int i = 0; i < sizeof(tail); i++)
-	// 	{
-	// 		Pointf position = tail[i];
-	// 		int d = distance({x, y}, {tail[i].x, tail[i].y});
-    //         if (d < 1)
-    //         {
-    //             total = 0;
-    //         }
-	// 	}
-	// }
+
+    bool DIEDIEDIE()
+	{
+		for (int i = 0; i < sizeof(tail); i++)
+		{
+			Pointf position = tail[i];
+			int d = distance({x, y}, {tail[i].x, tail[i].y});
+            if (d < 1)
+            {
+                return true;
+                total = 0;
+            }
+		}
+        return false;
+	}
+
+    void gameOverStolen(olc::PixelGameEngine* pge) //only appears for 1 frame 
+    {
+        if(DIEDIEDIE())
+        {
+            Pointf death;
+            olc::Sprite* spriteGameOver = nullptr;
+	        olc::Decal* decalGameOver = nullptr;
+            spriteGameOver = new olc::Sprite("gameOver.png");
+            decalGameOver = new olc::Decal(spriteGameOver);
+            pge->DrawDecal({death.x, death.y}, decalGameOver, {0.2f, 0.2f});
+        }else return;
+    }
+        
+    // void gameOver(olc::PixelGameEngine* pge, bool over)
+    // {
+    //     if (over)
+    //     {
+    //         pge->DrawStringDecal(&Pointf, );
+    //     }
+    // }
+    
 
 private:
     void wrapAroundEdges(Rect& screen, int scale)
