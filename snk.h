@@ -26,8 +26,8 @@ public:
     // This is a constructor
     Food(olc::PixelGameEngine* pge) {
         this->pge = pge;
-        cols = pge->ScreenWidth();
-        rows = pge->ScreenHeight();
+        cols = pge->ScreenWidth() / scale;
+        rows = pge->ScreenHeight() / scale;
     }
     int scale = 5;
     Point yum;
