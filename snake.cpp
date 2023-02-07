@@ -11,7 +11,23 @@ class POOPIES : public olc::PixelGameEngine
 {
     Worm smolWorm;
 	Food tasty;
-	//int death = 1;
+
+	void gameOverStolen() //only appears for 1 frame 
+    {
+        if(smolWorm.game == 2)
+        {
+            Pointf death;
+
+            olc::Sprite* spriteGameOver = nullptr;
+	        olc::Decal* decalGameOver = nullptr;
+
+            spriteGameOver = new olc::Sprite("gameOver.png");
+            decalGameOver = new olc::Decal(spriteGameOver);
+
+            DrawDecal({death.x, death.y}, decalGameOver, {0.2f, 0.2f});
+
+        }else return;
+    }
 
 	void gaming()
 	{
@@ -28,7 +44,7 @@ class POOPIES : public olc::PixelGameEngine
 	void gameOver()
 	{
 		smolWorm.DIEDIEDIE();   
-		smolWorm.gameOverStolen(this);   // game pover only appears for 1 frame at a time
+		gameOverStolen();   // game over only appears for 1 frame at a time
 	}
 
 public:
@@ -46,16 +62,6 @@ public:
 	{
         Clear(olc::Pixel(84, 65, 105));
         std::this_thread::sleep_for(50ms); //sleep
-
-		// smolWorm.update({tasty.cols, tasty.rows}, smolWorm.scale);
-        // smolWorm.showPredator(this); 
-        // smolWorm.keyboardInputs(this);
-
-        // tasty.showYum(this);
-        // if (smolWorm.yumIsEaten(tasty)) tasty.pickLocationYum();
-
-		// smolWorm.DIEDIEDIE();   
-		// smolWorm.gameOverStolen(this);   // game pover only appears for 1 frame at a time
 
 		switch(smolWorm.game)
 		{

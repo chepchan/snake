@@ -68,8 +68,8 @@ public:
         }
         tail[total - 1] = (Pointf){ x , y  };
 
-        x += speed * xDir; //*scale
-        y += speed * yDir; //*scale but it makes it way too fast
+        x += speed * xDir; 
+        y += speed * yDir;
         wrapAroundEdges(screen, scale);
     }
     void setDir(int x, int y)
@@ -126,30 +126,6 @@ public:
 		}
         return false;
 	}
-
-    void gameOverStolen(olc::PixelGameEngine* pge) //only appears for 1 frame 
-    {
-        if(game == 2)
-        {
-            Pointf death;
-            //death.x = pge->ScreenHeight() / 2;
-            //death.y = pge->ScreenWidth() / 2;
-            olc::Sprite* spriteGameOver = nullptr;
-	        olc::Decal* decalGameOver = nullptr;
-            spriteGameOver = new olc::Sprite("gameOver.png");
-            decalGameOver = new olc::Decal(spriteGameOver);
-            pge->DrawDecal({death.x, death.y}, decalGameOver, {0.2f, 0.2f});
-        }else return;
-    }
-        
-    // void gameOver(olc::PixelGameEngine* pge, bool over)
-    // {
-    //     if (over)
-    //     {
-    //         pge->DrawStringDecal(&Pointf, );
-    //     }
-    // }
-    
 
 private:
     void wrapAroundEdges(Rect& screen, int scale)
