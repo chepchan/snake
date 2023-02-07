@@ -17,14 +17,16 @@ class POOPIES : public olc::PixelGameEngine
         if(smolWorm.game == 2)
         {
             Pointf death;
-
             olc::Sprite* spriteGameOver = nullptr;
 	        olc::Decal* decalGameOver = nullptr;
 
-            spriteGameOver = new olc::Sprite("gameOver.png");
+            spriteGameOver = new olc::Sprite("badKitty.png");
             decalGameOver = new olc::Decal(spriteGameOver);
 
-            DrawDecal({death.x, death.y}, decalGameOver, {0.2f, 0.2f});
+			death.x = (ScreenWidth() / 2) - (decalGameOver->sprite->width / 2);
+			death.y = (ScreenHeight() / 2) - (decalGameOver->sprite->height / 2);
+
+			DrawDecal( {death.x, death.y}, decalGameOver, {1.0f, 1.0f} );
 
         }else return;
     }
@@ -60,7 +62,7 @@ public:
 
 	bool OnUserUpdate(float deltaTime) override
 	{
-        Clear(olc::Pixel(84, 65, 105));
+        Clear(olc::Pixel(101, 101, 101));
         std::this_thread::sleep_for(50ms); //sleep
 
 		switch(smolWorm.game)

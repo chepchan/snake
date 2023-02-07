@@ -34,7 +34,7 @@ public:
     // These are defined before the constructor is called
     int cols; // pge->ScreenWidth() can't have something like this because pge is undefined
     int rows;
-    olc::Pixel purple = { 194, 115, 255 };
+    olc::Pixel purple = { 161, 255, 246 };
 
     void pickLocationYum()
     {
@@ -57,7 +57,7 @@ public:
     int xDir = 1;
     int yDir = 0;
     int total = 0; //making the snake longer
-    olc::Pixel babyPink = { 255, 161, 203 };
+    olc::Pixel babyPink = { 252, 182, 223 };
     Pointf* tail = new Pointf[1000]; 
 
     void update(Rect screen, int scale)
@@ -66,7 +66,7 @@ public:
         {
             tail[i] = tail[i + 1];
         }
-        tail[total - 1] = (Pointf){ x , y  };
+        tail[total - 1] = { x , y  };
 
         x += speed * xDir; 
         y += speed * yDir;
