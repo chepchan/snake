@@ -7,12 +7,29 @@
 #include "snk.h"
 
 using namespace std::chrono_literals;
-
 class POOPIES : public olc::PixelGameEngine
 {
     Worm smolWorm;
 	Food tasty;
-	//bool over = false;
+	//int death = 1;
+
+	void gaming()
+	{
+		smolWorm.update({tasty.cols, tasty.rows}, smolWorm.scale);
+        smolWorm.showPredator(this); 
+        smolWorm.keyboardInputs(this);
+
+        tasty.showYum(this);
+        if (smolWorm.yumIsEaten(tasty)) tasty.pickLocationYum();
+
+		smolWorm.DIEDIEDIE();   
+	}
+
+	void gameOver()
+	{
+		smolWorm.DIEDIEDIE();   
+		smolWorm.gameOverStolen(this);   // game pover only appears for 1 frame at a time
+	}
 
 public:
 	POOPIES() { sAppName = "POOPIES"; }
@@ -24,20 +41,25 @@ public:
 
 	bool OnUserUpdate(float deltaTime) override
 	{
-        Clear(olc::Pixel(0, 0, 0));
+        Clear(olc::Pixel(84, 65, 105));
         std::this_thread::sleep_for(50ms); //sleep
 
-		smolWorm.update({tasty.cols, tasty.rows}, smolWorm.scale);
-        smolWorm.showPredator(this); 
-        smolWorm.keyboardInputs(this);
+		// smolWorm.update({tasty.cols, tasty.rows}, smolWorm.scale);
+        // smolWorm.showPredator(this); 
+        // smolWorm.keyboardInputs(this);
 
-        tasty.showYum(this);
-        if (smolWorm.yumIsEaten(tasty)) tasty.pickLocationYum();
+        // tasty.showYum(this);
+        // if (smolWorm.yumIsEaten(tasty)) tasty.pickLocationYum();
 
-		smolWorm.DIEDIEDIE();   
-		smolWorm.gameOverStolen(this);   // game pover only appears for 1 frame at a time
-		//if (smolWorm.DIEDIEDIE()) { smolWorm.gameOverStolen(this); }
- 
+		// smolWorm.DIEDIEDIE();   
+		// smolWorm.gameOverStolen(this);   // game pover only appears for 1 frame at a time
+
+		switch(smolWorm.game)
+		{
+			case 1: gaming(); break;
+			case 2: gameOver(); break;
+		}
+
 		return true;
 	}
 };

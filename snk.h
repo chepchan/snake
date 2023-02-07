@@ -16,11 +16,12 @@ struct Rect {
 };
 
 class Food {
-public:
+public: 
+    olc::PixelGameEngine* pge;
     int scale = 5;
     Point yum;
-    int cols = 256 / scale; //ScreenWidth() ????
-    int rows = 240 / scale; //ScreenHeight() ????
+    int cols = pge->ScreenWidth();//256 / scale; //ScreenWidth() ????
+    int rows = pge->ScreenHeight(); //240 / scale; //ScreenHeight() ????
     olc::Pixel purple = { 194, 115, 255 };
 
     void pickLocationYum()
@@ -33,8 +34,10 @@ public:
         pge->FillRect((int)(yum.x)*scale, (int)(yum.y)*scale, scale, scale, purple);
     }
 };
+
 class Worm {
 public:
+    int game = 1;
     float x = 0;
     float y = 0;
     float speed = 1;
@@ -98,14 +101,15 @@ public:
 
     bool DIEDIEDIE()
 	{
-		for (int i = 0; i < sizeof(tail); i++)
+		for (int i = 0; i < total - 1; i++)
 		{
 			Pointf position = tail[i];
 			int d = distance({x, y}, {tail[i].x, tail[i].y});
             if (d < 1)
             {
-                return true;
                 total = 0;
+                game = 2;
+                return true;
             }
 		}
         return false;
@@ -113,9 +117,11 @@ public:
 
     void gameOverStolen(olc::PixelGameEngine* pge) //only appears for 1 frame 
     {
-        if(DIEDIEDIE())
+        if(game == 2)
         {
             Pointf death;
+            //death.x = pge->ScreenHeight() / 2;
+            //death.y = pge->ScreenWidth() / 2;
             olc::Sprite* spriteGameOver = nullptr;
 	        olc::Decal* decalGameOver = nullptr;
             spriteGameOver = new olc::Sprite("gameOver.png");
