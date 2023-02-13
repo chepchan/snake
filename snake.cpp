@@ -25,8 +25,17 @@ class POOPIES : public olc::PixelGameEngine
 
 			death.x = (ScreenWidth() / 2) - (decalGameOver->sprite->width / 2);
 			death.y = (ScreenHeight() / 2) - (decalGameOver->sprite->height / 2);
-
 			DrawDecal( {death.x, death.y}, decalGameOver, {1.0f, 1.0f} );
+
+			death.x -= 40;
+			death.y += 130;
+			DrawStringDecal({death.x, death.y}, "Press enter to try again", { 255, 255, 255 });
+
+			if(GetKey(olc::Key::ENTER).bPressed)
+			{
+				smolWorm.game = 1;
+				return;
+			}
 
         }else return;
     }
@@ -62,7 +71,7 @@ public:
 
 	bool OnUserUpdate(float deltaTime) override
 	{
-        Clear(olc::Pixel(101, 101, 101));
+        Clear(olc::Pixel(0, 0, 0));
         std::this_thread::sleep_for(50ms); //sleep
 
 		switch(smolWorm.game)
