@@ -2,6 +2,7 @@
 #include <chrono>
 #include <thread>
 #include <cmath>
+#include <string>
 #define OLC_PGE_APPLICATION
 #include "olcPixelGameEngine.h"
 #include "snk.h"
@@ -12,27 +13,35 @@ class POOPIES : public olc::PixelGameEngine
     Worm smolWorm;
 	Food tasty;
 
-	void gameOverStolen() //only appears for 1 frame 
+	void gameOverStolen()
     {
         if(smolWorm.game == 2)
         {
-            Pointf death;
+            Pointf gameOverDecal;
+			Pointf tryAgainDecal;
+			// Pointf finalScoreDecal;
+
             olc::Sprite* spriteGameOver = nullptr;
 	        olc::Decal* decalGameOver = nullptr;
 
             spriteGameOver = new olc::Sprite("badKitty.png");
             decalGameOver = new olc::Decal(spriteGameOver);
 
-			death.x = (ScreenWidth() / 2) - (decalGameOver->sprite->width / 2);
-			death.y = (ScreenHeight() / 2) - (decalGameOver->sprite->height / 2);
-			DrawDecal( {death.x, death.y}, decalGameOver, {1.0f, 1.0f} );
+			gameOverDecal.x = (ScreenWidth() / 2) - (decalGameOver->sprite->width / 2);
+			gameOverDecal.y = (ScreenHeight() / 2) - (decalGameOver->sprite->height / 2);
+			DrawDecal( {gameOverDecal.x, gameOverDecal.y}, decalGameOver, {1.0f, 1.0f} );
 
-			death.x -= 40;
-			death.y += 130;
-			DrawStringDecal({death.x, death.y}, "Press enter to try again", { 255, 255, 255 });
+			tryAgainDecal.x = gameOverDecal.x - 40;
+			tryAgainDecal.y = gameOverDecal.y + 130;
+			DrawStringDecal({tryAgainDecal.x, tryAgainDecal.y}, "Press enter to try again", { 255, 255, 255 });
+
+			// finalScoreDecal.x = gameOverDecal.x + 130;
+			// finalScoreDecal.y = gameOverDecal.y - 130;
+			DrawStringDecal({5, 5}, std::to_string(smolWorm.scoreTrack), { 255, 255, 255 });
 
 			if(GetKey(olc::Key::ENTER).bPressed)
 			{
+				smolWorm.scoreTrack = 0;
 				smolWorm.game = 1;
 				return;
 			}
@@ -42,7 +51,7 @@ class POOPIES : public olc::PixelGameEngine
 
 	void gaming()
 	{
-		smolWorm.update({tasty.cols, tasty.rows}, smolWorm.scale);
+		smolWorm.update(this, {tasty.cols, tasty.rows}, smolWorm.scale);
         smolWorm.showPredator(this); 
         smolWorm.keyboardInputs(this);
 

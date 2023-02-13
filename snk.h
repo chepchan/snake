@@ -1,4 +1,5 @@
 #include "olcPixelGameEngine.h"
+#include <string>
 
 struct Point {
     int x = 0;
@@ -57,10 +58,12 @@ public:
     int xDir = 1;
     int yDir = 0;
     int total = 0; //making the snake longer
+    int scoreTrack = 0;
+
     olc::Pixel babyPink = { 252, 182, 223 };
     Pointf* tail = new Pointf[1000]; 
 
-    void update(Rect screen, int scale)
+    void update(olc::PixelGameEngine* pge, Rect screen, int scale)
     {
         for (int i = 0; i < total - 1; i++)
         {
@@ -70,7 +73,10 @@ public:
 
         x += speed * xDir; 
         y += speed * yDir;
+
         wrapAroundEdges(screen, scale);
+
+        pge->DrawStringDecal({5, 5}, std::to_string(scoreTrack), { 255, 255, 255 });
     }
     void setDir(int x, int y)
     {
@@ -105,6 +111,7 @@ public:
         int dist = distance({x, y}, {(float)(food.yum.x), (float)(food.yum.y)}); //distance between sneak and food
         if (dist < 1) { 
             total++; 
+            scoreTrack++;
             return true; 
         } else { 
             return false; 
