@@ -31,36 +31,35 @@ public:
         rows = pge->ScreenHeight() / scale;
     }
     int scale = 5;
-    Point yum;
+    Point food_loc;
     // These are defined before the constructor is called
     int cols; // pge->ScreenWidth() can't have something like this because pge is undefined
     int rows;
-    olc::Pixel purple = { 161, 255, 246 };
+    olc::Pixel foodColor = { 161, 255, 246 };
 
-    void pickLocationYum()
+    void pickLocation()
     {
-        yum = { rand() % cols, rand() % rows };
+        food_loc = { rand() % cols, rand() % rows };
     }
 
-    void showYum(olc::PixelGameEngine* pge)
+    void show(olc::PixelGameEngine* pge)
     {
-        pge->FillRect((int)(yum.x)*scale, (int)(yum.y)*scale, scale, scale, purple);
+        pge->FillRect((int)(food_loc.x)*scale, (int)(food_loc.y)*scale, scale, scale, foodColor);
     }
 };
 
-class Worm {
+class Snake {
 public:
-    int game = 1;
+    int state = 1;
     float x = 0;
     float y = 0;
     float speed = 1;
     int scale = 5; //resolution
     int xDir = 1;
     int yDir = 0;
-    int total = 0; //making the snake longer
-    int scoreTrack = 0;
+    int total = 0; 
 
-    olc::Pixel babyPink = { 252, 182, 223 };
+    olc::Pixel snakeColor = { 252, 182, 223 };
     Pointf* tail = new Pointf[1000]; 
 
     void update(olc::PixelGameEngine* pge, Rect screen, int scale)
@@ -76,7 +75,7 @@ public:
 
         wrapAroundEdges(screen, scale);
 
-        pge->DrawStringDecal({5, 5}, std::to_string(scoreTrack), { 255, 255, 255 });
+        pge->DrawStringDecal({5, 5}, std::to_string(total), { 255, 255, 255 });
     }
     void setDir(int x, int y)
     {
@@ -92,12 +91,12 @@ public:
         if(pge->GetKey(olc::Key::LEFT).bPressed)  { setDir(-1, 0); return; }
     }
 
-    void showPredator(olc::PixelGameEngine* pge)
+    void show(olc::PixelGameEngine* pge)
     {
-        pge->FillRect(int(x)*scale, int(y)*scale, scale, scale, babyPink);
+        pge->FillRect(int(x)*scale, int(y)*scale, scale, scale, snakeColor);
         for (int i = 0; i < total; i++)
         {
-           pge->FillRect(int(tail[i].x)*scale, int(tail[i].y)*scale, scale, scale, babyPink);
+           pge->FillRect(int(tail[i].x)*scale, int(tail[i].y)*scale, scale, scale, snakeColor);
         }
     }
 
@@ -106,19 +105,18 @@ public:
         return sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
     }
 
-    bool yumIsEaten(Food& food)
+    bool isEaten(Food& food)
     {
-        int dist = distance({x, y}, {(float)(food.yum.x), (float)(food.yum.y)}); //distance between sneak and food
+        int dist = distance({x, y}, {(float)(food.food_loc.x), (float)(food.food_loc.y)}); //distance between sneak and food
         if (dist < 1) { 
             total++; 
-            scoreTrack++;
             return true; 
         } else { 
             return false; 
         }
     }
 
-    bool DIEDIEDIE()
+    bool snakeDeath()
 	{
 		for (int i = 0; i < total - 1; i++)
 		{
@@ -126,8 +124,7 @@ public:
 			int d = distance({x, y}, {tail[i].x, tail[i].y});
             if (d < 1)
             {
-                total = 0;
-                game = 2;
+                state = 2;
                 return true;
             }
 		}

@@ -8,18 +8,17 @@
 #include "snk.h"
 
 using namespace std::chrono_literals;
-class POOPIES : public olc::PixelGameEngine
+class SNAKEGAME : public olc::PixelGameEngine
 {
-    Worm smolWorm;
-	Food tasty;
+    Snake snake;
+	Food food;
 
-	void gameOverStolen()
+	void gameOverScreen()
     {
-        if(smolWorm.game == 2)
+        if(snake.state == 2)
         {
             Pointf gameOverDecal;
 			Pointf tryAgainDecal;
-			// Pointf finalScoreDecal;
 
             olc::Sprite* spriteGameOver = nullptr;
 	        olc::Decal* decalGameOver = nullptr;
@@ -35,42 +34,40 @@ class POOPIES : public olc::PixelGameEngine
 			tryAgainDecal.y = gameOverDecal.y + 130;
 			DrawStringDecal({tryAgainDecal.x, tryAgainDecal.y}, "Press enter to try again", { 255, 255, 255 });
 
-			// finalScoreDecal.x = gameOverDecal.x + 130;
-			// finalScoreDecal.y = gameOverDecal.y - 130;
-			DrawStringDecal({5, 5}, std::to_string(smolWorm.scoreTrack), { 255, 255, 255 });
+			DrawStringDecal({5, 5}, std::to_string(snake.total), { 255, 255, 255 });
 
 			if(GetKey(olc::Key::ENTER).bPressed)
 			{
-				smolWorm.scoreTrack = 0;
-				smolWorm.game = 1;
+				snake.total = 0;
+				snake.state = 1;
 				return;
 			}
 
         }else return;
     }
 
-	void gaming()
+	void gameBegin()
 	{
-		smolWorm.update(this, {tasty.cols, tasty.rows}, smolWorm.scale);
-        smolWorm.showPredator(this); 
-        smolWorm.keyboardInputs(this);
+		snake.update(this, {food.cols, food.rows}, snake.scale);
+        snake.keyboardInputs(this);
+        snake.show(this); 
 
-        tasty.showYum(this);
-        if (smolWorm.yumIsEaten(tasty)) tasty.pickLocationYum();
+        food.show(this);
+        if (snake.isEaten(food)) food.pickLocation();
 
-		smolWorm.DIEDIEDIE();   
+		snake.snakeDeath();   
 	}
 
-	void gameOver()
+	void gameEnd()
 	{
-		smolWorm.DIEDIEDIE();   
-		gameOverStolen();   // game over only appears for 1 frame at a time
+		snake.snakeDeath();   
+		gameOverScreen(); 
 	}
 
 public:
-	POOPIES() { 
-        sAppName = "POOPIES"; 
-        tasty = Food(this);
+	SNAKEGAME() { 
+        sAppName = "SNAKE"; 
+        food = Food(this);
     }
 
 	bool OnUserCreate() override
@@ -83,10 +80,10 @@ public:
         Clear(olc::Pixel(0, 0, 0));
         std::this_thread::sleep_for(50ms); //sleep
 
-		switch(smolWorm.game)
+		switch(snake.state)
 		{
-			case 1: gaming(); break;
-			case 2: gameOver(); break;
+			case 1: gameBegin(); break;
+			case 2: gameEnd(); break;
 		}
 
 		return true;
@@ -95,7 +92,7 @@ public:
 
 int main()
 {
-	POOPIES game;
+	SNAKEGAME game;
     const int width = 256;
     const int height = 240;
     const int pixelScale = 4;
