@@ -1,5 +1,7 @@
 #include "olcPixelGameEngine.h"
 #include <string>
+#include <stdlib.h> 
+#include <time.h> 
 
 struct Point {
     int x = 0;
@@ -9,11 +11,6 @@ struct Point {
 struct Pointf {
     float x = 0;
     float y = 0;
-};
-
-struct Rect {
-    int width = 0;
-    int height = 0;
 };
 
 class Food {
@@ -27,42 +24,59 @@ public:
     // This is a constructor
     Food(olc::PixelGameEngine* pge) {
         this->pge = pge;
-        cols = pge->ScreenWidth() / scale;
-        rows = pge->ScreenHeight() / scale;
     }
-    int scale = 5;
+    
     Point food_loc;
     // These are defined before the constructor is called
     int cols; // pge->ScreenWidth() can't have something like this because pge is undefined
     int rows;
+    int scale = 30;
+
     olc::Pixel foodColor = { 161, 255, 246 };
 
+    
     void pickLocation()
     {
+        srand(time(0));
+
+        int cols = pge->ScreenWidth() / scale;
+        int rows = pge->ScreenHeight() / scale;
         food_loc = { rand() % cols, rand() % rows };
     }
 
-    void show(olc::PixelGameEngine* pge)
+    void show()
     {
-        pge->FillRect((int)(food_loc.x)*scale, (int)(food_loc.y)*scale, scale, scale, foodColor);
+        //pge->FillRect((int)(food_loc.x)*scale, (int)(food_loc.y)*scale, scale, scale, foodColor);
+        olc::Sprite* spriteFood = nullptr;
+	    olc::Decal* decalFood = nullptr;
+        spriteFood = new olc::Sprite("food.png");
+        decalFood = new olc::Decal(spriteFood);
+        //pickLocation();
+        pge->DrawDecal( {(float)food_loc.x * scale, (float)food_loc.y * scale}, decalFood, {1.0f, 1.0f});
+
     }
 };
 
 class Snake {
 public:
+    olc::PixelGameEngine* pge;
+    Snake() = default;
+    Snake(olc::PixelGameEngine* pge) {
+        this->pge = pge;
+    }
     int state = 1;
     float x = 0;
     float y = 0;
     float speed = 1;
-    int scale = 5; //resolution
+    int scale = 30; //resolution
     int xDir = 1;
     int yDir = 0;
     int total = 0; 
 
-    olc::Pixel snakeColor = { 252, 182, 223 };
+    olc::Pixel snakeColor = { 255, 175, 181 }; //252, 182, 223
     Pointf* tail = new Pointf[1000]; 
 
-    void update(olc::PixelGameEngine* pge, Rect screen, int scale)
+    void update()
     {
         for (int i = 0; i < total - 1; i++)
         {
@@ -73,9 +87,9 @@ public:
         x += speed * xDir; 
         y += speed * yDir;
 
-        wrapAroundEdges(screen, scale);
-
-        pge->DrawStringDecal({5, 5}, std::to_string(total), { 255, 255, 255 });
+        wrapAroundEdges(pge);
+        //draws the score
+        pge->DrawStringDecal({5, 5}, std::to_string(total), { 255, 175, 181 }, {4.0f, 4.0f});
     }
     void setDir(int x, int y)
     {
@@ -83,7 +97,7 @@ public:
         yDir = y;
     }
 
-    void keyboardInputs(olc::PixelGameEngine* pge)
+    void keyboardInputs()
     {
         if(pge->GetKey(olc::Key::UP).bPressed)    { setDir(0, -1); return; }
         if(pge->GetKey(olc::Key::DOWN).bPressed)  { setDir(0, 1);  return; }
@@ -91,12 +105,25 @@ public:
         if(pge->GetKey(olc::Key::LEFT).bPressed)  { setDir(-1, 0); return; }
     }
 
-    void show(olc::PixelGameEngine* pge)
+    void show()
     {
-        pge->FillRect(int(x)*scale, int(y)*scale, scale, scale, snakeColor);
+        //pge->FillRect(int(x)*scale, int(y)*scale, scale, scale, snakeColor);
+        olc::Sprite* spriteHead = nullptr;
+	    olc::Decal* decalHead = nullptr;
+        spriteHead = new olc::Sprite("head2.png");
+        decalHead = new olc::Decal(spriteHead);
+
+        olc::Sprite* spriteSpine = nullptr;
+	    olc::Decal* decalSpine = nullptr;
+        spriteSpine = new olc::Sprite("spine.png");
+        decalSpine = new olc::Decal(spriteSpine);
+
+        pge->DrawDecal( {int(x)*scale, int(y)*scale}, decalHead, {1.0f, 1.0f});
+
         for (int i = 0; i < total; i++)
         {
-           pge->FillRect(int(tail[i].x)*scale, int(tail[i].y)*scale, scale, scale, snakeColor);
+           //pge->FillRect(int(tail[i].x)*scale, int(tail[i].y)*scale, scale, scale, snakeColor);
+           pge->DrawDecal( {int(tail[i].x)*scale, int(tail[i].y)*scale}, decalSpine, {1.0f, 1.0f});
         }
     }
 
@@ -110,6 +137,7 @@ public:
         int dist = distance({x, y}, {(float)(food.food_loc.x), (float)(food.food_loc.y)}); //distance between sneak and food
         if (dist < 1) { 
             total++; 
+            //food.pickLocation();
             return true; 
         } else { 
             return false; 
@@ -131,13 +159,16 @@ public:
         return false;
 	}
 
-private:
-    void wrapAroundEdges(Rect& screen, int scale)
+//private:
+    void wrapAroundEdges(olc::PixelGameEngine* pge)
     {
-        if (x > screen.width) { x = 0; }
-        if (x + scale < 0) { x = screen.width - 1; }
-        if (y > screen.height) { y = 0; }
-        if (y + scale < 0) { y = screen.height - 1; }
+        int width = pge->ScreenWidth() / scale;
+        int height = pge->ScreenHeight() / scale;
+
+        if (x > width) { x = 0; }
+        if (x + 1 < 0) { x = width - 1; }
+        if (y > height) { y = 0; }
+        if (y + 1 < 0) { y = height - 1; }
     }
 
 };
