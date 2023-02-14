@@ -1,5 +1,7 @@
 #include "olcPixelGameEngine.h"
 #include <string>
+#include <stdlib.h> 
+#include <time.h> 
 
 struct Point {
     int x = 0;
@@ -13,7 +15,6 @@ struct Pointf {
 
 class Food {
 public: 
-
     // This has to come from somewhere it's currently undefined
     olc::PixelGameEngine* pge;
     // This is the default constructor
@@ -29,12 +30,15 @@ public:
     // These are defined before the constructor is called
     int cols; // pge->ScreenWidth() can't have something like this because pge is undefined
     int rows;
-    int scale = 25;
+    int scale = 30;
 
     olc::Pixel foodColor = { 161, 255, 246 };
 
+    
     void pickLocation()
     {
+        srand(time(0));
+
         int cols = pge->ScreenWidth() / scale;
         int rows = pge->ScreenHeight() / scale;
         food_loc = { rand() % cols, rand() % rows };
@@ -43,12 +47,11 @@ public:
     void show()
     {
         //pge->FillRect((int)(food_loc.x)*scale, (int)(food_loc.y)*scale, scale, scale, foodColor);
-        
         olc::Sprite* spriteFood = nullptr;
 	    olc::Decal* decalFood = nullptr;
-        spriteFood = new olc::Sprite("hellokittysnake.png");
+        spriteFood = new olc::Sprite("food.png");
         decalFood = new olc::Decal(spriteFood);
-        
+        //pickLocation();
         pge->DrawDecal( {(float)food_loc.x * scale, (float)food_loc.y * scale}, decalFood, {1.0f, 1.0f});
 
     }
@@ -65,12 +68,12 @@ public:
     float x = 0;
     float y = 0;
     float speed = 1;
-    int scale = 25; //resolution
+    int scale = 30; //resolution
     int xDir = 1;
     int yDir = 0;
     int total = 0; 
 
-    olc::Pixel snakeColor = { 252, 182, 223 };
+    olc::Pixel snakeColor = { 255, 175, 181 }; //252, 182, 223
     Pointf* tail = new Pointf[1000]; 
 
     void update()
@@ -85,8 +88,8 @@ public:
         y += speed * yDir;
 
         wrapAroundEdges(pge);
-
-        pge->DrawStringDecal({5, 5}, std::to_string(total), { 255, 255, 255 }, {3.0f, 3.0f});
+        //draws the score
+        pge->DrawStringDecal({5, 5}, std::to_string(total), { 255, 175, 181 }, {4.0f, 4.0f});
     }
     void setDir(int x, int y)
     {
@@ -104,10 +107,23 @@ public:
 
     void show()
     {
-        pge->FillRect(int(x)*scale, int(y)*scale, scale, scale, snakeColor);
+        //pge->FillRect(int(x)*scale, int(y)*scale, scale, scale, snakeColor);
+        olc::Sprite* spriteHead = nullptr;
+	    olc::Decal* decalHead = nullptr;
+        spriteHead = new olc::Sprite("head2.png");
+        decalHead = new olc::Decal(spriteHead);
+
+        olc::Sprite* spriteSpine = nullptr;
+	    olc::Decal* decalSpine = nullptr;
+        spriteSpine = new olc::Sprite("spine.png");
+        decalSpine = new olc::Decal(spriteSpine);
+
+        pge->DrawDecal( {int(x)*scale, int(y)*scale}, decalHead, {1.0f, 1.0f});
+
         for (int i = 0; i < total; i++)
         {
-           pge->FillRect(int(tail[i].x)*scale, int(tail[i].y)*scale, scale, scale, snakeColor);
+           //pge->FillRect(int(tail[i].x)*scale, int(tail[i].y)*scale, scale, scale, snakeColor);
+           pge->DrawDecal( {int(tail[i].x)*scale, int(tail[i].y)*scale}, decalSpine, {1.0f, 1.0f});
         }
     }
 
@@ -121,6 +137,7 @@ public:
         int dist = distance({x, y}, {(float)(food.food_loc.x), (float)(food.food_loc.y)}); //distance between sneak and food
         if (dist < 1) { 
             total++; 
+            //food.pickLocation();
             return true; 
         } else { 
             return false; 
