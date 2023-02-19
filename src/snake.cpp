@@ -13,7 +13,7 @@ void Snake::update()
     tail[total - 1] = { x , y  };
     x += speed * xDir; 
     y += speed * yDir;
-    wrapAroundEdges(pge);
+    wrapAroundEdges();
     pge->DrawStringDecal({5, 5}, std::to_string(total), { 255, 175, 181 }, {4.0f, 4.0f});
 }
 
@@ -35,16 +35,21 @@ void Snake::show()
 {
     olc::Sprite* spriteHead = nullptr;
     olc::Decal* decalHead = nullptr;
-    spriteHead = new olc::Sprite("assets/head2.png");
+
+    spriteHead = new olc::Sprite("assets/snake-head.png");
     decalHead = new olc::Decal(spriteHead);
+
     olc::Sprite* spriteSpine = nullptr;
     olc::Decal* decalSpine = nullptr;
-    spriteSpine = new olc::Sprite("assets/spine.png");
+
+    spriteSpine = new olc::Sprite("assets/snake-spine.png");
     decalSpine = new olc::Decal(spriteSpine);
-    pge->DrawDecal( {int(x)*scale, int(y)*scale}, decalHead, {1.0f, 1.0f});
+
+    pge->DrawDecal( {float(x)*scale, float(y)*scale}, decalHead, {1.0f, 1.0f});
+
     for (int i = 0; i < total; i++)
     {
-       pge->DrawDecal( {int(tail[i].x)*scale, int(tail[i].y)*scale}, decalSpine, {1.0f, 1.0f});
+       pge->DrawDecal( {float(tail[i].x)*scale, float(tail[i].y)*scale}, decalSpine, {1.0f, 1.0f});
     }
 }
 
@@ -79,10 +84,11 @@ bool Snake::snakeDeath()
     return false;
 }
 
-void Snake::wrapAroundEdges(olc::PixelGameEngine* pge)
+void Snake::wrapAroundEdges()
 {
     int width = pge->ScreenWidth() / scale;
     int height = pge->ScreenHeight() / scale;
+    
     if (x > width) { x = 0; }
     if (x + 1 < 0) { x = width - 1; }
     if (y > height) { y = 0; }

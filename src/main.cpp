@@ -22,7 +22,7 @@ class SNAKEGAME : public olc::PixelGameEngine
     	olc::Sprite* spriteGameOver = nullptr;
 		olc::Decal* decalGameOver = nullptr;
 
-    	spriteGameOver = new olc::Sprite("assets/gameOver.png");
+    	spriteGameOver = new olc::Sprite("assets/game-over.png");
     	decalGameOver = new olc::Decal(spriteGameOver);
 
 		gameOverDecal.x = (ScreenWidth() / 2) - (decalGameOver->sprite->width / 2);
