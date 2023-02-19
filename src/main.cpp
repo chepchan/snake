@@ -4,8 +4,9 @@
 #include <cmath>
 #include <string>
 #define OLC_PGE_APPLICATION
-#include "olcPixelGameEngine.h"
-#include "snk.h"
+#include "../libs/olcPixelGameEngine.h"
+#include "snake.hpp"
+
 
 using namespace std::chrono_literals;
 class SNAKEGAME : public olc::PixelGameEngine
@@ -91,8 +92,8 @@ public:
 int main()
 {
 	SNAKEGAME game;
-    const int width = 1400;
-    const int height = 970;
+    const int width = 1000;
+    const int height = 950;
     const int pixelScale = 1;
 
 	if (!game.Construct(width, height, pixelScale, pixelScale)) return EXIT_FAILURE;

@@ -1,4 +1,8 @@
-#include "olcPixelGameEngine.h"
+#pragma once
+
+#include "food.hpp"
+#include "../libs/olcPixelGameEngine.h"
+
 #include <string>
 #include <stdlib.h> 
 #include <time.h> 
