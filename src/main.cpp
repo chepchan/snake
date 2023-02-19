@@ -22,7 +22,7 @@ class SNAKEGAME : public olc::PixelGameEngine
     	olc::Sprite* spriteGameOver = nullptr;
 		olc::Decal* decalGameOver = nullptr;
 
-    	spriteGameOver = new olc::Sprite("gameOver.png");
+    	spriteGameOver = new olc::Sprite("assets/gameOver.png");
     	decalGameOver = new olc::Decal(spriteGameOver);
 
 		gameOverDecal.x = (ScreenWidth() / 2) - (decalGameOver->sprite->width / 2);
@@ -49,7 +49,6 @@ class SNAKEGAME : public olc::PixelGameEngine
         snake.keyboardInputs(); 
         snake.show(); 
 
-		//food.pickLocation();
         food.show();
         if (snake.isEaten(food)) food.pickLocation();
 
@@ -77,7 +76,7 @@ public:
 	bool OnUserUpdate(float deltaTime) override
 	{
         Clear(olc::Pixel(0, 0, 0));
-        std::this_thread::sleep_for(50ms); //sleep
+        std::this_thread::sleep_for(50ms);
 
 		switch(snake.state)
 		{
